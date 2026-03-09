@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopPro V2 - Technical Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #020617;
+            /* Slate 950 */
+            --accent-primary: #00D4FF;
+            /* Cyan */
+            --accent-secondary: #ec4899;
+            /* Pink */
+            --accent-tertiary: #6366f1;
+            /* Indigo */
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+            --neon-glow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        *::-webkit-scrollbar {
+            display: none;
+            /* Chrome/Safari */
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+        }
+
+        .presentation-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        section {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Ambient Glows */
+        .ambient-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            z-index: -1;
+            pointer-events: none;
+            animation: pulse-glow 8s infinite alternate ease-in-out;
+        }
+
+        .glow-1 {
+            top: -10%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-tertiary) 0%, transparent 70%);
+        }
+
+        .glow-2 {
+            bottom: -20%;
+            right: -10%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, var(--accent-primary) 0%, transparent 70%);
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                transform: scale(1);
+                opacity: 0.15;
+            }
+
+            100% {
+                transform: scale(1.1);
+                opacity: 0.25;
+            }
+        }
+
+        /* Slide Content Frame */
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 4rem;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            transform: translateY(40px) scale(0.98);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        section.visible .slide-content {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .slide-header {
+            margin-bottom: 3rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .slide-id {
+            color: var(--accent-primary);
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary), var(--accent-tertiary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 5s linear infinite;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        h2 {
+            font-size: 3.5rem;
+            margin-top: 0.5rem;
+            line-height: 1.1;
+        }
+
+        /* Grid System */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        /* Tech Cards */
+        .tech-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            padding: 2.5rem;
+            border-radius: 24px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tech-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-tertiary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: var(--neon-glow);
+        }
+
+        .tech-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .tech-card h3 {
+            color: var(--text-main);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tech-card p {
+            color: var(--text-dim);
+            font-size: 1.05rem;
+        }
+
+        /* Hero Slide */
+        .hero-slide {
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 6rem;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.04em;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto 3rem auto;
+        }
+
+        /* Architecture Flow */
+        .arch-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 3rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 3rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .arch-node {
+            text-align: center;
+            padding: 1.5rem 2.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            border: 1px solid var(--accent-primary);
+            position: relative;
+            z-index: 2;
+        }
+
+        .arch-node h4 {
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .arch-node p {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .arch-arrow {
+            width: 80px;
+            height: 2px;
+            background: var(--text-dim);
+            position: relative;
+        }
+
+        .arch-arrow::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -4px;
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 10px solid var(--text-dim);
+        }
+
+        .animated-arrow {
+            background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+            background-size: 200% 100%;
+            animation: flow 2s infinite linear;
+        }
+
+        @keyframes flow {
+            0% {
+                background-position: 100% 0;
+            }
+
+            100% {
+                background-position: -100% 0;
+            }
+        }
+
+        /* Lists */
+        ul {
+            list-style: none;
+        }
+
+        li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            font-size: 1.1rem;
+            color: var(--text-main);
+        }
+
+        li::before {
+            content: "✦";
+            color: var(--accent-primary);
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            animation: pulse-glow 2s infinite alternate;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 2rem;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+
+        th,
+        td {
+            padding: 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-dim);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-family: 'Outfit';
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .method-badge {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            font-family: monospace;
+        }
+
+        .method-get {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+        }
+
+        .method-post {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+        }
+
+        /* Code Snippet */
+        .code-block {
+            background: #000;
+            padding: 2rem;
+            border-radius: 16px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #a78bfa;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            margin-top: 2rem;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: float 2s infinite ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .scroll-indicator::after {
+            content: '↓';
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(-50%, 0);
+            }
+
+            50% {
+                transform: translate(-50%, 10px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="presentation-container">
+        <!-- Ambient Background -->
+        <div class="ambient-glow glow-1"></div>
+        <div class="ambient-glow glow-2"></div>
+
+        <!-- Section 1: Hero -->
+        <section id="slide-1">
+            <div class="slide-content hero-slide">
+                <span class="slide-id">PRODUCTION v2.0</span>
+                <h1 class="hero-title"><span class="gradient-text">ShopPro V2</span></h1>
+                <p class="hero-subtitle">Intelligent Retail Fabric & High-Speed Price Checking Kiosk System</p>
+                <div class="grid grid-3" style="max-width: 800px; margin: 0 auto;">
+                    <div
+                        style="padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid var(--accent-primary); color: var(--accent-primary); font-weight: bold;">
+                        FLUTTER</div>
+                    <div
+                        style="padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid #7000ff; color: #b48cff; font-weight: bold;">
+                        NODE.JS</div>
+                    <div
+                        style="padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid var(--accent-secondary); color: var(--accent-secondary); font-weight: bold;">
+                        MSSQL / SAP</div>
+                </div>
+            </div>
+            <div class="scroll-indicator">Scroll downward</div>
+        </section>
+
+        <!-- Section 2: Core Technologies -->
+        <section id="slide-2">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <span class="slide-id">01 // STACK PROFILE</span>
+                    <h2>Technical <span class="gradient-text">Foundation</span></h2>
+                </div>
+                <div class="grid grid-3">
+                    <div class="tech-card">
+                        <h3 style="color: var(--accent-primary);">Frontend Application</h3>
+                        <p>Built with <strong>Flutter</strong> for high-performance kiosk rendering. Interfaces directly
+                            with Adler APK950Pro hardware using Native Android Intents for 100% scan reliability without
+                            focus loss.</p>
+                    </div>
+                    <div class="tech-card">
+                        <h3 style="color: #b48cff;">API Bridge</h3>
+                        <p>Powered by <strong>Node.js (API v2)</strong>. A localized bridging server providing
+                            zero-config mDNS (Bonjour) discovery, REST endpoints, and bi-directional WebSocket
+                            broadcasting.</p>
+                    </div>
+                    <div class="tech-card">
+                        <h3 style="color: var(--accent-secondary);">Enterprise Data Layer</h3>
+                        <p>Abstracted Data Providers supporting <strong>MSSQL Stored Procedures</strong> for direct DB
+                            access, or transparent integration with 3rd-party REST APIs like <strong>SAP/ERP</strong>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Key Features -->
+        <section id="slide-3">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <span class="slide-id">02 // CAPABILITIES</span>
+                    <h2>Intelligent <span class="gradient-text">Features</span></h2>
+                </div>
+                <div class="grid grid-2">
+                    <div>
+                        <ul>
+                            <li><strong>Auto-Discovery:</strong> Zero-config setup. The app automatically resolves the
+                                API server on the local <code>.local</code> network.</li>
+                            <li><strong>Dynamic Media Scheduling:</strong> Full-screen image/video advertising with
+                                time-based interval controls (10s timeline cycles) pushed to idle screens.</li>
+                            <li><strong>Real-Time Configuration:</strong> Remote dashboard management of themes, layout
+                                templates, and timeout parameters synced instantly via WebSockets.</li>
+                            <li><strong>Emergency Broadcast:</strong> Capable of pushing instant alert messages to all
+                                active terminals simultaneously.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="code-block">
+                            // Device Configuration Sync<br>
+                            {<br>
+                            &nbsp;&nbsp;"deviceId": "APK950-A1",<br>
+                            &nbsp;&nbsp;"themeMode": "dark",<br>
+                            &nbsp;&nbsp;"layoutTemplate": "split_view",<br>
+                            &nbsp;&nbsp;"syncInterval": 10000,<br>
+                            &nbsp;&nbsp;"activeMedia": ["promo_video.mp4"]<br>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Architecture -->
+        <section id="slide-4">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <span class="slide-id">03 // ARCHITECTURE</span>
+                    <h2>Real-Time <span class="gradient-text">Workflow</span></h2>
+                </div>
+                <div class="arch-flow">
+                    <div class="arch-node">
+                        <h4>Flutter Scanner</h4>
+                        <p>Intent/KB Input<br>WS Listener</p>
+                    </div>
+                    <div class="arch-arrow animated-arrow" title="Barcode Request"></div>
+                    <div class="arch-node" style="border-color: #b48cff;">
+                        <h4 style="color: #b48cff;">Node.js Bridge</h4>
+                        <p>REST & WebSocket<br>Data Abstraction</p>
+                    </div>
+                    <div class="arch-arrow animated-arrow" title="SQL/REST Fetch"></div>
+                    <div class="arch-node" style="border-color: var(--accent-secondary);">
+                        <h4 style="color: var(--accent-secondary);">Data Source</h4>
+                        <p>MSSQL / SAP<br>Pricing & Promos</p>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 2rem; color: var(--text-dim); font-size: 1.1rem;">
+                    Focus Recovery System ensures Adler hardware reclaims intent every 4 seconds. <br> Adaptive
+                    Reconnect attempts WS connection every 5 seconds on drop.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 5: Security & Networking -->
+        <section id="slide-5">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <span class="slide-id">04 // INFRASTRUCTURE</span>
+                    <h2>Security & <span class="gradient-text">Networking</span></h2>
+                </div>
+                <div class="grid grid-2">
+                    <div class="tech-card" style="padding: 2rem;">
+                        <h3 style="font-size: 1.2rem;">LAN Isolation</h3>
+                        <p style="font-size: 0.95rem;">System operates purely on mDNS (Bonjour), restricting visibility
+                            entirely to the internal retail network layer.</p>
+                    </div>
+                    <div class="tech-card" style="padding: 2rem;">
+                        <h3 style="font-size: 1.2rem;">SQL Protection</h3>
+                        <p style="font-size: 0.95rem;">Database interactions rely exclusively on parameterized stored
+                            procedures, eliminating SQL injection vectors.</p>
+                    </div>
+                    <div class="tech-card" style="padding: 2rem;">
+                        <h3 style="font-size: 1.2rem;">Encrypted Transport</h3>
+                        <p style="font-size: 0.95rem;">Internal communication to SQL Server utilizes TLS/TDS encryption
+                            (DB_ENCRYPT flags).</p>
+                    </div>
+                    <div class="tech-card" style="padding: 2rem;">
+                        <h3 style="font-size: 1.2rem;">Device Fingerprinting</h3>
+                        <p style="font-size: 0.95rem;">Every kiosk generates a unique UUID to prevent unauthorized
+                            configuration overrides.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: API Spec -->
+        <section id="slide-6">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <span class="slide-id">05 // DATA SPECIFICATION</span>
+                    <h2>API Endpoints <span class="gradient-text">(v2.0)</span></h2>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>Endpoint</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="method-badge method-get">GET</span></td>
+                            <td style="font-family: monospace; color: var(--text-main);">/health</td>
+                            <td>Server health status, uptime, and DB connection state.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge method-post">POST</span></td>
+                            <td style="font-family: monospace; color: var(--text-main);">/api/scan</td>
+                            <td>Process intent barcode, retrieve prices, log scan activity.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge method-get">GET</span></td>
+                            <td style="font-family: monospace; color: var(--text-main);">/api/settings</td>
+                            <td>Fetch device-specific UI layout and timeout configurations.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge method-post">POST</span></td>
+                            <td style="font-family: monospace; color: var(--text-main);">/api/settings</td>
+                            <td>Update or register device dimensions and theming preferences.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge method-get">GET</span></td>
+                            <td style="font-family: monospace; color: var(--text-main);">/api/media</td>
+                            <td>Fetch 10-second scheduled media playlists & broadcast events.</td>
+                        </tr>
+                        <tr>
+                            <td><span class="method-badge method-get">GET</span></td>
+                            <td style="font-family: monospace; color: var(--text-main);">/api/dashboard/stats</td>
+                            <td>Aggregated metrics (scan counts, active devices) for admin console.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 7: Outro -->
+        <section id="slide-7">
+            <div class="slide-content hero-slide" style="border-color: var(--accent-primary);">
+                <span class="slide-id" style="margin-bottom: 2rem;">END OF REPORT</span>
+                <h2 style="font-size: 4rem; margin-bottom: 2rem;">Enterprise Ready.</h2>
+                <p style="font-size: 1.2rem; color: var(--text-dim);">Fully integrated architecture designed for maximum
+                    performance, minimal maintenance, and beautiful retail experiences.</p>
+                <div
+                    style="margin-top: 3rem; display: inline-block; padding: 15px 40px; border-radius: 30px; background: rgba(0, 212, 255, 0.1); border: 1px solid var(--accent-primary); color: var(--accent-primary); font-weight: bold; letter-spacing: 1px;">
+                    SHOPPRO V2
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // Intersection Observer for Slide Animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.4 });
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Basic keyboard navigation
+        window.addEventListener('keydown', (e) => {
+            const container = document.querySelector('.presentation-container');
+            if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                container.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+            } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                container.scrollBy({ top: -window.innerHeight, behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+
+</html>
