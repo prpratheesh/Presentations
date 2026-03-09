@@ -1,0 +1,1748 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TickeFlow · Technical Architecture — instance-20260304-091114</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        :root {
+            --bg: #04050d;
+            --s1: #080b18;
+            --s2: #0d1020;
+            --c1: #7c3aed;
+            --c2: #06b6d4;
+            --c3: #f59e0b;
+            --c4: #10b981;
+            --cr: #ef4444;
+            --tx: #e2e8f0;
+            --mu: #64748b;
+            --br: #1e2540
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--tx);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6
+        }
+
+        code,
+        pre,
+        .mono {
+            font-family: 'JetBrains Mono', monospace
+        }
+
+        /* NAV */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 99;
+            background: rgba(4, 5, 13, .9);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--br);
+            padding: 14px 40px;
+            display: flex;
+            align-items: center;
+            gap: 32px
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--c1), var(--c2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-right: auto
+        }
+
+        nav a {
+            color: var(--mu);
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            transition: .2s
+        }
+
+        nav a:hover {
+            color: var(--tx)
+        }
+
+        /* HERO */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 24px 60px;
+            position: relative;
+            overflow: hidden
+        }
+
+        .hbg {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 70% 50% at 50% 20%, rgba(124, 58, 237, .15), transparent 70%), radial-gradient(ellipse 40% 30% at 80% 80%, rgba(6, 182, 212, .08), transparent)
+        }
+
+        .htag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(124, 58, 237, .12);
+            border: 1px solid rgba(124, 58, 237, .3);
+            border-radius: 50px;
+            padding: 6px 16px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--c1);
+            margin-bottom: 24px
+        }
+
+        .htag span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--c1);
+            animation: blink 1.4s infinite
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .2
+            }
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 700;
+            letter-spacing: -2px;
+            line-height: 1.05;
+            margin-bottom: 16px
+        }
+
+        .gg {
+            background: linear-gradient(135deg, var(--c1), var(--c2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent
+        }
+
+        .vm-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--s2);
+            border: 1px solid var(--br);
+            border-radius: 12px;
+            padding: 12px 24px;
+            margin: 24px auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--c4)
+        }
+
+        .vm-pill::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--c4);
+            box-shadow: 0 0 10px var(--c4);
+            animation: blink 2s infinite
+        }
+
+        .hero-sub {
+            color: var(--mu);
+            font-size: 16px;
+            max-width: 580px;
+            margin: 0 auto 40px
+        }
+
+        /* SECTIONS */
+        section {
+            padding: 90px 24px
+        }
+
+        .si {
+            max-width: 1200px;
+            margin: 0 auto
+        }
+
+        .sl {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--c1);
+            margin-bottom: 10px
+        }
+
+        .st {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(24px, 3.5vw, 40px);
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 12px
+        }
+
+        .sd {
+            color: var(--mu);
+            font-size: 15px;
+            margin-bottom: 48px;
+            max-width: 640px
+        }
+
+        /* CARDS */
+        .grid2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px
+        }
+
+        .grid3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px
+        }
+
+        .grid4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px
+        }
+
+        @media(max-width:900px) {
+
+            .grid3,
+            .grid4 {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .grid2 {
+                grid-template-columns: 1fr
+            }
+
+            nav a {
+                display: none
+            }
+        }
+
+        @media(max-width:600px) {
+
+            .grid3,
+            .grid4,
+            .grid2 {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .card {
+            background: var(--s1);
+            border: 1px solid var(--br);
+            border-radius: 18px;
+            padding: 28px;
+            transition: .3s
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(124, 58, 237, .4)
+        }
+
+        .card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px
+        }
+
+        .card p,
+        .card li {
+            color: var(--mu);
+            font-size: 13px;
+            line-height: 1.75
+        }
+
+        .card ul {
+            list-style: none;
+            padding: 0
+        }
+
+        .card ul li::before {
+            content: '▸ ';
+            color: var(--c1)
+        }
+
+        .ci {
+            font-size: 32px;
+            margin-bottom: 14px
+        }
+
+        .ct {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 50px;
+            margin-bottom: 12px
+        }
+
+        .ct-p {
+            background: rgba(124, 58, 237, .15);
+            color: #a78bfa
+        }
+
+        .ct-b {
+            background: rgba(6, 182, 212, .12);
+            color: var(--c2)
+        }
+
+        .ct-d {
+            background: rgba(16, 185, 129, .12);
+            color: var(--c4)
+        }
+
+        .ct-r {
+            background: rgba(245, 158, 11, .12);
+            color: var(--c3)
+        }
+
+        /* ARCH DIAGRAM */
+        #arch-diagram {
+            background: var(--s1);
+            border: 1px solid var(--br);
+            border-radius: 24px;
+            padding: 48px 32px
+        }
+
+        .arch-row {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin: 0
+        }
+
+        .arch-sep {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 10px 0;
+            color: var(--mu);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px
+        }
+
+        .arch-sep::before,
+        .arch-sep::after {
+            content: '';
+            flex: 1;
+            max-width: 80px;
+            height: 1px;
+            background: var(--br)
+        }
+
+        .abox {
+            background: var(--s2);
+            border: 1px solid var(--br);
+            border-radius: 14px;
+            padding: 16px 18px;
+            text-align: center;
+            min-width: 140px;
+            transition: .3s;
+            cursor: default
+        }
+
+        .abox:hover {
+            border-color: var(--c1);
+            box-shadow: 0 0 20px rgba(124, 58, 237, .15)
+        }
+
+        .abox .ai {
+            font-size: 26px;
+            margin-bottom: 6px
+        }
+
+        .abox strong {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 2px
+        }
+
+        .abox span {
+            font-size: 10px;
+            color: var(--mu)
+        }
+
+        .abox.hl {
+            border-color: rgba(6, 182, 212, .4);
+            background: rgba(6, 182, 212, .06)
+        }
+
+        .abox.hv {
+            border-color: rgba(124, 58, 237, .4);
+            background: rgba(124, 58, 237, .06)
+        }
+
+        .abox.hg {
+            border-color: rgba(16, 185, 129, .4);
+            background: rgba(16, 185, 129, .06)
+        }
+
+        /* API TABLE */
+        .api-section {
+            margin-bottom: 36px
+        }
+
+        .api-group {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 10px 18px;
+            background: rgba(124, 58, 237, .1);
+            border-left: 3px solid var(--c1);
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--s1);
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--br)
+        }
+
+        th {
+            background: var(--s2);
+            color: var(--mu);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 12px 16px;
+            text-align: left
+        }
+
+        td {
+            padding: 12px 16px;
+            border-top: 1px solid var(--br);
+            font-size: 13px;
+            color: var(--tx)
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, .02)
+        }
+
+        .method {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 5px;
+            min-width: 52px;
+            text-align: center
+        }
+
+        .GET {
+            background: rgba(16, 185, 129, .15);
+            color: #34d399
+        }
+
+        .POST {
+            background: rgba(6, 182, 212, .15);
+            color: var(--c2)
+        }
+
+        .PATCH {
+            background: rgba(245, 158, 11, .15);
+            color: var(--c3)
+        }
+
+        .DELETE {
+            background: rgba(239, 68, 68, .15);
+            color: #f87171
+        }
+
+        .WS {
+            background: rgba(124, 58, 237, .2);
+            color: #a78bfa
+        }
+
+        .ep {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--c2)
+        }
+
+        /* VM LAYOUT */
+        .vm-box {
+            background: var(--s1);
+            border: 2px solid var(--br);
+            border-radius: 20px;
+            padding: 32px;
+            position: relative
+        }
+
+        .vm-box::before {
+            content: 'GCP VM · instance-20260304-091114';
+            position: absolute;
+            top: -12px;
+            left: 24px;
+            background: var(--s2);
+            border: 1px solid var(--c1);
+            border-radius: 50px;
+            padding: 4px 16px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--c1);
+            letter-spacing: 1px;
+            text-transform: uppercase
+        }
+
+        .vm-layers {
+            display: flex;
+            flex-direction: column;
+            gap: 14px
+        }
+
+        .vm-layer {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: var(--s2);
+            border: 1px solid var(--br);
+            border-radius: 14px;
+            padding: 16px 20px
+        }
+
+        .vm-layer:hover {
+            border-color: rgba(124, 58, 237, .4)
+        }
+
+        .vl-icon {
+            font-size: 28px;
+            width: 44px;
+            flex-shrink: 0;
+            text-align: center
+        }
+
+        .vl-info h4 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 3px
+        }
+
+        .vl-info p {
+            font-size: 12px;
+            color: var(--mu)
+        }
+
+        .vl-badge {
+            margin-left: auto;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 50px;
+            white-space: nowrap
+        }
+
+        .b-purple {
+            background: rgba(124, 58, 237, .15);
+            color: #a78bfa
+        }
+
+        .b-cyan {
+            background: rgba(6, 182, 212, .12);
+            color: var(--c2)
+        }
+
+        .b-green {
+            background: rgba(16, 185, 129, .12);
+            color: var(--c4)
+        }
+
+        .b-amber {
+            background: rgba(245, 158, 11, .12);
+            color: var(--c3)
+        }
+
+        /* DB SCHEMA */
+        .db-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px
+        }
+
+        .db-table {
+            background: var(--s2);
+            border: 1px solid var(--br);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: .3s
+        }
+
+        .db-table:hover {
+            border-color: rgba(6, 182, 212, .4)
+        }
+
+        .db-head {
+            background: rgba(6, 182, 212, .08);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            border-bottom: 1px solid var(--br);
+            color: var(--c2)
+        }
+
+        .db-field {
+            padding: 7px 16px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            border-bottom: 1px solid rgba(30, 37, 64, .5)
+        }
+
+        .db-field:last-child {
+            border: none
+        }
+
+        .df-name {
+            flex: 1;
+            color: var(--tx)
+        }
+
+        .df-type {
+            color: var(--mu);
+            font-size: 10px
+        }
+
+        .df-pk {
+            color: var(--c3);
+            font-size: 9px;
+            font-weight: 700;
+            background: rgba(245, 158, 11, .1);
+            padding: 1px 5px;
+            border-radius: 3px
+        }
+
+        .df-fk {
+            color: #a78bfa;
+            font-size: 9px;
+            font-weight: 700;
+            background: rgba(124, 58, 237, .1);
+            padding: 1px 5px;
+            border-radius: 3px
+        }
+
+        /* PIPELINE */
+        .pipeline {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            overflow-x: auto;
+            padding: 12px 0
+        }
+
+        .pipe-step {
+            flex: 1;
+            min-width: 150px;
+            background: var(--s2);
+            border: 1px solid var(--br);
+            border-radius: 14px;
+            padding: 18px 16px;
+            text-align: center;
+            transition: .3s
+        }
+
+        .pipe-step:hover {
+            border-color: var(--c1)
+        }
+
+        .pipe-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--c1), var(--c2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            margin: 0 auto 10px
+        }
+
+        .pipe-step h4 {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px
+        }
+
+        .pipe-step p {
+            font-size: 11px;
+            color: var(--mu)
+        }
+
+        .pipe-arrow {
+            font-size: 20px;
+            color: var(--br);
+            flex-shrink: 0;
+            padding: 0 4px
+        }
+
+        /* WS */
+        .ws-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 750px
+        }
+
+        .ws-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: var(--s2);
+            border: 1px solid var(--br);
+            border-radius: 12px;
+            padding: 14px 18px
+        }
+
+        .ws-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 50px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            margin-top: 2px
+        }
+
+        .ws-text h4 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 3px
+        }
+
+        .ws-text p {
+            font-size: 12px;
+            color: var(--mu)
+        }
+
+        /* PORTS TABLE */
+        .port-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px
+        }
+
+        .port-item {
+            background: var(--s2);
+            border: 1px solid var(--br);
+            border-radius: 12px;
+            padding: 18px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            transition: .3s
+        }
+
+        .port-item:hover {
+            border-color: rgba(16, 185, 129, .4)
+        }
+
+        .port-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--c4);
+            flex-shrink: 0;
+            min-width: 60px
+        }
+
+        .port-info h4 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 3px
+        }
+
+        .port-info p {
+            font-size: 12px;
+            color: var(--mu)
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--s1);
+            border-top: 1px solid var(--br);
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--mu);
+            flex-wrap: wrap;
+            gap: 8px
+        }
+
+        /* GLOW DIVIDER */
+        .gd {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--c1), var(--c2), transparent);
+            margin: 0;
+            opacity: .4
+        }
+
+        /* FADE */
+        .fi {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity .6s, transform .6s
+        }
+
+        .fi.v {
+            opacity: 1;
+            transform: none
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">⚡ TickeFlow · Technical Docs</div>
+        <a href="#vm">VM Layout</a>
+        <a href="#arch">Architecture</a>
+        <a href="#api">API Reference</a>
+        <a href="#db">Database</a>
+        <a href="#ws">WebSocket</a>
+        <a href="#pipeline">CI/CD</a>
+    </nav>
+
+    <!-- HERO -->
+    <section id="hero">
+        <div class="hbg"></div>
+        <div style="position:relative;z-index:1">
+            <div class="htag"><span></span> GCP · Compute Engine · Technical Reference</div>
+            <h1>TickeFlow<br><span class="gg">Deployment Architecture</span></h1>
+            <div class="vm-pill">instance-20260304-091114 · us-central1 · e2-medium · RUNNING</div>
+            <p class="hero-sub">Complete technical breakdown of the deployed system — VM internals, service topology,
+                API contracts, database schema, WebSocket events, and CI/CD pipeline.</p>
+        </div>
+    </section>
+
+    <div class="gd"></div>
+
+    <!-- VM LAYOUT -->
+    <section id="vm" style="background:var(--s1)">
+        <div class="si fi">
+            <div class="sl">GCP VM Internals</div>
+            <div class="st">What Lives Inside the VM</div>
+            <div class="sd">All components run directly on the Compute Engine VM. No Kubernetes — lightweight, simple,
+                cost-effective for retail deployment.</div>
+            <div class="vm-box">
+                <div class="vm-layers">
+                    <div class="vm-layer">
+                        <div class="vl-icon">🌐</div>
+                        <div class="vl-info">
+                            <h4>Nginx Reverse Proxy (Port 80 / 443)</h4>
+                            <p>Terminates HTTPS. Routes <code>/api/*</code> → NestJS :8080. Routes <code>/</code> →
+                                React static files. Handles SSL termination.</p>
+                        </div>
+                        <div class="vl-badge b-cyan">GATEWAY</div>
+                    </div>
+                    <div class="vm-layer">
+                        <div class="vl-icon">⚙️</div>
+                        <div class="vl-info">
+                            <h4>NestJS Backend — Port 8080</h4>
+                            <p>Core API server + Socket.IO WebSocket server. Runs as a Node.js process (or inside
+                                Docker). Connects to PostgreSQL via Prisma ORM.</p>
+                        </div>
+                        <div class="vl-badge b-purple">BACKEND</div>
+                    </div>
+                    <div class="vm-layer">
+                        <div class="vl-icon">📡</div>
+                        <div class="vl-info">
+                            <h4>Socket.IO Gateway — Port 8080 (WS Upgrade)</h4>
+                            <p>WebSocket server co-hosted with HTTP on port 8080. Upgrades HTTP connections. Room-based
+                                pub/sub for ticket status events.</p>
+                        </div>
+                        <div class="vl-badge b-purple">REALTIME</div>
+                    </div>
+                    <div class="vm-layer">
+                        <div class="vl-icon">⚛️</div>
+                        <div class="vl-info">
+                            <h4>React Frontend — Static Files</h4>
+                            <p>Built with Vite and served as static HTML/JS/CSS by Nginx from
+                                <code>/var/www/tickeflow/</code>. Three entry points: <code>index.html</code>
+                                (customer), <code>merchant.html</code> (staff), <code>tv.html</code> (display).</p>
+                        </div>
+                        <div class="vl-badge b-cyan">FRONTEND</div>
+                    </div>
+                    <div class="vm-layer">
+                        <div class="vl-icon">🐘</div>
+                        <div class="vl-info">
+                            <h4>PostgreSQL — Port 5432</h4>
+                            <p>Primary relational database. Managed via Prisma ORM with schema migrations. Stores all
+                                tickets, customers, orgs, branches, statuses, and push subscriptions.</p>
+                        </div>
+                        <div class="vl-badge b-green">DATABASE</div>
+                    </div>
+                    <div class="vm-layer">
+                        <div class="vl-icon">🔔</div>
+                        <div class="vl-info">
+                            <h4>Web Push Service (VAPID)</h4>
+                            <p>Browser Push Notifications via <code>web-push</code> library. VAPID key pair configured
+                                in <code>.env</code>. Subscriptions stored in <code>PushSubscription</code> table.</p>
+                        </div>
+                        <div class="vl-badge b-amber">PUSH</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ARCHITECTURE DIAGRAM -->
+    <section id="arch">
+        <div class="si fi">
+            <div class="sl">System Architecture</div>
+            <div class="st">Full Component Topology</div>
+            <div class="sd">How every part of the system connects — from customer mobile browser to the PostgreSQL
+                database on the VM.</div>
+            <div id="arch-diagram">
+                <!-- CLIENT LAYER -->
+                <div class="arch-row">
+                    <div class="abox">
+                        <div class="ai">📱</div><strong>Customer App</strong><span>React · Mobile Browser<br>scan QR →
+                            get DQR</span>
+                    </div>
+                    <div class="abox">
+                        <div class="ai">🧑‍🍳</div><strong>Staff Portal</strong><span>React ·
+                            Tablet/Desktop<br>merchant.html</span>
+                    </div>
+                    <div class="abox">
+                        <div class="ai">📺</div><strong>TV Display</strong><span>React · Monitor<br>tv.html · live
+                            counter</span>
+                    </div>
+                    <div class="abox">
+                        <div class="ai">🖥️</div><strong>Admin Dashboard</strong><span>React · Browser<br>store config ·
+                            reports</span>
+                    </div>
+                </div>
+                <div class="arch-sep">HTTPS (443) · WebSocket Upgrade</div>
+                <!-- NGINX -->
+                <div class="arch-row">
+                    <div class="abox hl">
+                        <div class="ai">🌐</div><strong>Nginx Proxy</strong><span>Port 80 / 443<br>/api/* → :8080 | / →
+                            static</span>
+                    </div>
+                </div>
+                <div class="arch-sep">HTTP / WebSocket — Internal :8080</div>
+                <!-- NESTJS -->
+                <div class="arch-row">
+                    <div class="abox hv">
+                        <div class="ai">⚙️</div><strong>NestJS API</strong><span>Port 8080<br>REST + Socket.IO</span>
+                    </div>
+                </div>
+                <div class="arch-sep">Module Layer</div>
+                <!-- MODULES -->
+                <div class="arch-row">
+                    <div class="abox">
+                        <div class="ai">🔐</div><strong>AuthModule</strong><span>JWT · bcrypt</span>
+                    </div>
+                    <div class="abox">
+                        <div class="ai">👤</div><strong>CustomersModule</strong><span>Register · Lookup</span>
+                    </div>
+                    <div class="abox">
+                        <div class="ai">🎫</div><strong>TicketsModule</strong><span>DQR · Status · Scan</span>
+                    </div>
+                    <div class="abox">
+                        <div class="ai">🏪</div><strong>RetailModule</strong><span>Dept · Device · Status</span>
+                    </div>
+                    <div class="abox">
+                        <div class="ai">🔔</div><strong>PushModule</strong><span>VAPID · Subscribe</span>
+                    </div>
+                    <div class="abox">
+                        <div class="ai">📊</div><strong>ReportsModule</strong><span>Analytics · Logs</span>
+                    </div>
+                </div>
+                <div class="arch-sep">Prisma ORM · Connection Pool</div>
+                <!-- DB -->
+                <div class="arch-row">
+                    <div class="abox hg">
+                        <div class="ai">🐘</div><strong>PostgreSQL</strong><span>Port 5432<br>10 Models ·
+                            Relational</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PORTS -->
+    <section style="background:var(--s1)">
+        <div class="si fi">
+            <div class="sl">Network Ports</div>
+            <div class="st">Port Map — VM Firewall Rules</div>
+            <div class="port-grid">
+                <div class="port-item">
+                    <div class="port-num">:80</div>
+                    <div class="port-info">
+                        <h4>HTTP (Nginx)</h4>
+                        <p>Redirects to HTTPS. Handles Let's Encrypt ACME challenges.</p>
+                    </div>
+                </div>
+                <div class="port-item">
+                    <div class="port-num">:443</div>
+                    <div class="port-info">
+                        <h4>HTTPS (Nginx)</h4>
+                        <p>Main public entry point. Terminates TLS, proxies to :8080.</p>
+                    </div>
+                </div>
+                <div class="port-item">
+                    <div class="port-num">:8080</div>
+                    <div class="port-info">
+                        <h4>NestJS API + Socket.IO</h4>
+                        <p>Internal port. Not exposed publicly. REST API and WebSocket upgrade.</p>
+                    </div>
+                </div>
+                <div class="port-item">
+                    <div class="port-num">:5432</div>
+                    <div class="port-info">
+                        <h4>PostgreSQL</h4>
+                        <p>Internal only. Accessed by NestJS via Prisma. Firewall blocks external access.</p>
+                    </div>
+                </div>
+                <div class="port-item">
+                    <div class="port-num">:22</div>
+                    <div class="port-info">
+                        <h4>SSH (Admin)</h4>
+                        <p>Restricted to admin IPs via GCP firewall rules. Used for VM management.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API REFERENCE -->
+    <section id="api">
+        <div class="si fi">
+            <div class="sl">API Reference</div>
+            <div class="st">All REST Endpoints</div>
+            <div class="sd">Base URL: <code style="color:var(--c2)">https://your-vm-ip/api</code> &nbsp;·&nbsp; All
+                responses: JSON &nbsp;·&nbsp; Auth: JWT Bearer token</div>
+
+            <!-- AUTH -->
+            <div class="api-section">
+                <div class="api-group">🔐 Authentication &nbsp;<span
+                        style="color:var(--mu);font-size:11px;font-weight:400">/auth</span></div>
+                <table>
+                    <tr>
+                        <th>Method</th>
+                        <th>Endpoint</th>
+                        <th>Description</th>
+                        <th>Auth</th>
+                    </tr>
+                    <tr>
+                        <td><span class="method POST">POST</span></td>
+                        <td class="ep">/auth/login</td>
+                        <td>Login with username + password → returns JWT token</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- CUSTOMERS -->
+            <div class="api-section">
+                <div class="api-group">👤 Customers &nbsp;<span
+                        style="color:var(--mu);font-size:11px;font-weight:400">/customers</span></div>
+                <table>
+                    <tr>
+                        <th>Method</th>
+                        <th>Endpoint</th>
+                        <th>Description</th>
+                        <th>Auth</th>
+                    </tr>
+                    <tr>
+                        <td><span class="method POST">POST</span></td>
+                        <td class="ep">/customers/register</td>
+                        <td>Register or update customer (upsert by mobile number)</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method GET">GET</span></td>
+                        <td class="ep">/customers/verify/:mobile</td>
+                        <td>Look up existing customer by mobile for auto-fill</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- TICKETS -->
+            <div class="api-section">
+                <div class="api-group">🎫 Tickets &nbsp;<span
+                        style="color:var(--mu);font-size:11px;font-weight:400">/tickets</span></div>
+                <table>
+                    <tr>
+                        <th>Method</th>
+                        <th>Endpoint</th>
+                        <th>Description</th>
+                        <th>Auth</th>
+                    </tr>
+                    <tr>
+                        <td><span class="method POST">POST</span></td>
+                        <td class="ep">/tickets</td>
+                        <td>Create new ticket — generates unique DQR token + ticket number</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method POST">POST</span></td>
+                        <td class="ep">/tickets/scan</td>
+                        <td>Staff scans DQR — processes device scan, triggers auto-status update</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method GET">GET</span></td>
+                        <td class="ep">/tickets/active</td>
+                        <td>All currently active (non-closed) tickets across all branches</td>
+                        <td style="color:var(--mu)">JWT</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method GET">GET</span></td>
+                        <td class="ep">/tickets/active/:customerId</td>
+                        <td>Active tickets for a specific customer</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method GET">GET</span></td>
+                        <td class="ep">/tickets/active-by-fp/:fp</td>
+                        <td>Active tickets by device fingerprint (for session restore)</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method GET">GET</span></td>
+                        <td class="ep">/tickets/by-reference/:ref</td>
+                        <td>Lookup ticket by human-readable reference number</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method GET">GET</span></td>
+                        <td class="ep">/tickets/by-token/:token</td>
+                        <td>Lookup ticket by DQR token (used by QR scanner)</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method GET">GET</span></td>
+                        <td class="ep">/tickets/:id</td>
+                        <td>Get single ticket by database ID</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method PATCH">PATCH</span></td>
+                        <td class="ep">/tickets/:id/status</td>
+                        <td>Update ticket status — accepts status name (string) or status ID (number)</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method PATCH">PATCH</span></td>
+                        <td class="ep">/tickets/:id/close</td>
+                        <td>Close/collect ticket — sets closedAt, invalidates DQR session</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- RETAIL / DEPARTMENTS -->
+            <div class="api-section">
+                <div class="api-group">🏪 Retail Departments &nbsp;<span
+                        style="color:var(--mu);font-size:11px;font-weight:400">/retail</span></div>
+                <table>
+                    <tr>
+                        <th>Method</th>
+                        <th>Endpoint</th>
+                        <th>Description</th>
+                        <th>Auth</th>
+                    </tr>
+                    <tr>
+                        <td><span class="method POST">POST</span></td>
+                        <td class="ep">/retail/departments</td>
+                        <td>Create new department (Butchery, Fishery, etc.)</td>
+                        <td style="color:var(--mu)">JWT</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method GET">GET</span></td>
+                        <td class="ep">/retail/departments/:orgId/:branchId</td>
+                        <td>List all departments. Query <code>?includeInactive=true</code> to include disabled.</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method GET">GET</span></td>
+                        <td class="ep">/retail/departments/:id</td>
+                        <td>Get single department by ID</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method PATCH">PATCH</span></td>
+                        <td class="ep">/retail/departments/:id</td>
+                        <td>Update department name, prefix, or active state</td>
+                        <td style="color:var(--mu)">JWT</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method DELETE">DELETE</span></td>
+                        <td class="ep">/retail/departments/:id</td>
+                        <td>Delete department (soft delete)</td>
+                        <td style="color:var(--mu)">JWT</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- ORDER STATUS -->
+            <div class="api-section">
+                <div class="api-group">🔄 Order Statuses &nbsp;<span
+                        style="color:var(--mu);font-size:11px;font-weight:400">/order-status</span></div>
+                <table>
+                    <tr>
+                        <th>Method</th>
+                        <th>Endpoint</th>
+                        <th>Description</th>
+                        <th>Auth</th>
+                    </tr>
+                    <tr>
+                        <td><span class="method POST">POST</span></td>
+                        <td class="ep">/order-status</td>
+                        <td>Create custom status step for a department (e.g. "Cleaning Started")</td>
+                        <td style="color:var(--mu)">JWT</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method GET">GET</span></td>
+                        <td class="ep">/order-status?departmentId=N</td>
+                        <td>Get all statuses for a department, ordered by sequence</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method GET">GET</span></td>
+                        <td class="ep">/order-status/:id</td>
+                        <td>Get single status definition</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method PATCH">PATCH</span></td>
+                        <td class="ep">/order-status/:id</td>
+                        <td>Update status name, sequence, isInitial, isFinal, isActive</td>
+                        <td style="color:var(--mu)">JWT</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method DELETE">DELETE</span></td>
+                        <td class="ep">/order-status/:id</td>
+                        <td>Remove status step</td>
+                        <td style="color:var(--mu)">JWT</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- DEVICES -->
+            <div class="api-section">
+                <div class="api-group">📱 Devices &nbsp;<span
+                        style="color:var(--mu);font-size:11px;font-weight:400">/devices</span></div>
+                <table>
+                    <tr>
+                        <th>Method</th>
+                        <th>Endpoint</th>
+                        <th>Description</th>
+                        <th>Auth</th>
+                    </tr>
+                    <tr>
+                        <td><span class="method POST">POST</span></td>
+                        <td class="ep">/devices</td>
+                        <td>Register a new staff scanning device for a department</td>
+                        <td style="color:var(--mu)">JWT</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method GET">GET</span></td>
+                        <td class="ep">/devices?departmentId=N</td>
+                        <td>List all devices, optionally filtered by department</td>
+                        <td style="color:var(--mu)">JWT</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method GET">GET</span></td>
+                        <td class="ep">/devices/:id</td>
+                        <td>Get device by ID</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method GET">GET</span></td>
+                        <td class="ep">/devices/code/:code</td>
+                        <td>Get device by unique code (used during QR scan)</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method PATCH">PATCH</span></td>
+                        <td class="ep">/devices/:id</td>
+                        <td>Update device config — default status, auto-update, allowed statuses</td>
+                        <td style="color:var(--mu)">JWT</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method DELETE">DELETE</span></td>
+                        <td class="ep">/devices/:id</td>
+                        <td>Remove device</td>
+                        <td style="color:var(--mu)">JWT</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- PUSH -->
+            <div class="api-section">
+                <div class="api-group">🔔 Push Notifications &nbsp;<span
+                        style="color:var(--mu);font-size:11px;font-weight:400">/push</span></div>
+                <table>
+                    <tr>
+                        <th>Method</th>
+                        <th>Endpoint</th>
+                        <th>Description</th>
+                        <th>Auth</th>
+                    </tr>
+                    <tr>
+                        <td><span class="method POST">POST</span></td>
+                        <td class="ep">/push/subscribe</td>
+                        <td>Store browser push subscription (endpoint + p256dh + auth keys)</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                    <tr>
+                        <td><span class="method GET">GET</span></td>
+                        <td class="ep">/push/vapid-public-key</td>
+                        <td>Return VAPID public key for frontend Service Worker registration</td>
+                        <td style="color:var(--mu)">None</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- WEBSOCKET EVENTS -->
+    <section id="ws" style="background:var(--s1)">
+        <div class="si fi">
+            <div class="sl">Real-Time Layer</div>
+            <div class="st">WebSocket Events — Socket.IO</div>
+            <div class="sd">All events are namespaced by ticket room (<code>ticket:&lt;ticketId&gt;</code>). Clients
+                join their room on connection using the DQR token.</div>
+            <div class="ws-flow">
+                <div class="ws-item">
+                    <span class="ws-badge" style="background:rgba(6,182,212,.15);color:var(--c2)">CLIENT→SERVER</span>
+                    <div class="ws-text">
+                        <h4>joinRoom</h4>
+                        <p>Customer joins their ticket room. Payload: <code>&#123; ticketId, token &#125;</code>. Server
+                            validates token before allowing join.</p>
+                    </div>
+                </div>
+                <div class="ws-item">
+                    <span class="ws-badge" style="background:rgba(124,58,237,.15);color:#a78bfa">SERVER→CLIENT</span>
+                    <div class="ws-text">
+                        <h4>ticketStatusUpdated</h4>
+                        <p>Broadcast when staff changes status. Payload:
+                            <code>&#123; ticketId, status, statusName, timestamp &#125;</code>. Triggers UI update +
+                            push notification.</p>
+                    </div>
+                </div>
+                <div class="ws-item">
+                    <span class="ws-badge" style="background:rgba(124,58,237,.15);color:#a78bfa">SERVER→CLIENT</span>
+                    <div class="ws-text">
+                        <h4>ticketClosed</h4>
+                        <p>Emitted when order is collected. Payload: <code>&#123; ticketId, closedAt &#125;</code>.
+                            Frontend auto-dismisses session and prompts new DQR.</p>
+                    </div>
+                </div>
+                <div class="ws-item">
+                    <span class="ws-badge" style="background:rgba(16,185,129,.15);color:var(--c4)">SERVER→TV</span>
+                    <div class="ws-text">
+                        <h4>counterUpdate</h4>
+                        <p>Sent to TV display room when next ticket is called. Payload:
+                            <code>&#123; ticketNumber, departmentId, counter &#125;</code>. Drives the in-store display
+                            board.</p>
+                    </div>
+                </div>
+                <div class="ws-item">
+                    <span class="ws-badge" style="background:rgba(245,158,11,.15);color:var(--c3)">AUTO-TRIGGER</span>
+                    <div class="ws-text">
+                        <h4>Device Scan → Auto Status</h4>
+                        <p>When staff scans DQR → <code>POST /tickets/scan</code> → NestJS auto-advances ticket to
+                            device's <code>defaultStatus</code> → emits <code>ticketStatusUpdated</code> over WebSocket
+                            — all in one server-side chain.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DATABASE SCHEMA -->
+    <section id="db">
+        <div class="si fi">
+            <div class="sl">Database Schema</div>
+            <div class="st">PostgreSQL — 10 Models via Prisma</div>
+            <div class="sd">Multi-tenant design. Every ticket is scoped to an
+                <code>Organization → Branch → Department</code> chain.</div>
+            <div class="db-grid">
+                <div class="db-table">
+                    <div class="db-head">🏢 Organization</div>
+                    <div class="db-field"><span class="df-name">id</span><span class="df-type">Int</span><span
+                            class="df-pk">PK</span></div>
+                    <div class="db-field"><span class="df-name">name</span><span class="df-type">String</span></div>
+                    <div class="db-field"><span class="df-name">createdAt</span><span class="df-type">DateTime</span>
+                    </div>
+                </div>
+                <div class="db-table">
+                    <div class="db-head">🏪 Branch</div>
+                    <div class="db-field"><span class="df-name">id</span><span class="df-type">Int</span><span
+                            class="df-pk">PK</span></div>
+                    <div class="db-field"><span class="df-name">name</span><span class="df-type">String</span></div>
+                    <div class="db-field"><span class="df-name">organizationId</span><span
+                            class="df-type">Int</span><span class="df-fk">FK</span></div>
+                </div>
+                <div class="db-table">
+                    <div class="db-head">🥩 RetailDepartment</div>
+                    <div class="db-field"><span class="df-name">id</span><span class="df-type">Int</span><span
+                            class="df-pk">PK</span></div>
+                    <div class="db-field"><span class="df-name">deptName</span><span class="df-type">String</span></div>
+                    <div class="db-field"><span class="df-name">prefix</span><span class="df-type">Varchar(10)</span>
+                    </div>
+                    <div class="db-field"><span class="df-name">branchId</span><span class="df-type">Int</span><span
+                            class="df-fk">FK</span></div>
+                    <div class="db-field"><span class="df-name">organizationId</span><span
+                            class="df-type">Int</span><span class="df-fk">FK</span></div>
+                    <div class="db-field"><span class="df-name">isActive</span><span class="df-type">Boolean</span>
+                    </div>
+                </div>
+                <div class="db-table">
+                    <div class="db-head">👤 Customer</div>
+                    <div class="db-field"><span class="df-name">id</span><span class="df-type">Int</span><span
+                            class="df-pk">PK</span></div>
+                    <div class="db-field"><span class="df-name">mobile</span><span class="df-type">String</span><span
+                            class="df-pk">UNIQUE</span></div>
+                    <div class="db-field"><span class="df-name">name</span><span class="df-type">String</span></div>
+                    <div class="db-field"><span class="df-name">email</span><span class="df-type">String?</span></div>
+                    <div class="db-field"><span class="df-name">address</span><span class="df-type">String?</span></div>
+                </div>
+                <div class="db-table">
+                    <div class="db-head">🎫 Ticket</div>
+                    <div class="db-field"><span class="df-name">id</span><span class="df-type">Int</span><span
+                            class="df-pk">PK</span></div>
+                    <div class="db-field"><span class="df-name">ticketNumber</span><span
+                            class="df-type">String</span><span class="df-pk">UNIQUE</span></div>
+                    <div class="db-field"><span class="df-name">dqrToken</span><span class="df-type">String</span><span
+                            class="df-pk">UNIQUE</span></div>
+                    <div class="db-field"><span class="df-name">customerId</span><span class="df-type">Int?</span><span
+                            class="df-fk">FK</span></div>
+                    <div class="db-field"><span class="df-name">branchId</span><span class="df-type">Int</span><span
+                            class="df-fk">FK</span></div>
+                    <div class="db-field"><span class="df-name">departmentId</span><span class="df-type">Int</span><span
+                            class="df-fk">FK</span></div>
+                    <div class="db-field"><span class="df-name">statusId</span><span class="df-type">Int?</span><span
+                            class="df-fk">FK</span></div>
+                    <div class="db-field"><span class="df-name">deviceFingerprint</span><span
+                            class="df-type">Varchar(100)</span></div>
+                    <div class="db-field"><span class="df-name">items</span><span class="df-type">Json?</span></div>
+                    <div class="db-field"><span class="df-name">closedAt</span><span class="df-type">DateTime?</span>
+                    </div>
+                </div>
+                <div class="db-table">
+                    <div class="db-head">🔄 OrderStatus</div>
+                    <div class="db-field"><span class="df-name">id</span><span class="df-type">Int</span><span
+                            class="df-pk">PK</span></div>
+                    <div class="db-field"><span class="df-name">name</span><span class="df-type">String</span></div>
+                    <div class="db-field"><span class="df-name">sequence</span><span class="df-type">Int</span></div>
+                    <div class="db-field"><span class="df-name">isInitial</span><span class="df-type">Boolean</span>
+                    </div>
+                    <div class="db-field"><span class="df-name">isFinal</span><span class="df-type">Boolean</span></div>
+                    <div class="db-field"><span class="df-name">departmentId</span><span class="df-type">Int</span><span
+                            class="df-fk">FK</span></div>
+                </div>
+                <div class="db-table">
+                    <div class="db-head">📱 Device</div>
+                    <div class="db-field"><span class="df-name">id</span><span class="df-type">Int</span><span
+                            class="df-pk">PK</span></div>
+                    <div class="db-field"><span class="df-name">name</span><span class="df-type">String</span></div>
+                    <div class="db-field"><span class="df-name">code</span><span class="df-type">String</span><span
+                            class="df-pk">UNIQUE</span></div>
+                    <div class="db-field"><span class="df-name">departmentId</span><span class="df-type">Int</span><span
+                            class="df-fk">FK</span></div>
+                    <div class="db-field"><span class="df-name">defaultStatusId</span><span
+                            class="df-type">Int?</span><span class="df-fk">FK</span></div>
+                    <div class="db-field"><span class="df-name">autoUpdateEnabled</span><span
+                            class="df-type">Boolean</span></div>
+                    <div class="db-field"><span class="df-name">allowedStatuses</span><span class="df-type">Json?</span>
+                    </div>
+                </div>
+                <div class="db-table">
+                    <div class="db-head">📜 TicketStatusLog</div>
+                    <div class="db-field"><span class="df-name">id</span><span class="df-type">Int</span><span
+                            class="df-pk">PK</span></div>
+                    <div class="db-field"><span class="df-name">ticketId</span><span class="df-type">Int</span><span
+                            class="df-fk">FK</span></div>
+                    <div class="db-field"><span class="df-name">oldStatusId</span><span class="df-type">Int?</span><span
+                            class="df-fk">FK</span></div>
+                    <div class="db-field"><span class="df-name">newStatusId</span><span class="df-type">Int</span><span
+                            class="df-fk">FK</span></div>
+                    <div class="db-field"><span class="df-name">deviceId</span><span class="df-type">Int?</span><span
+                            class="df-fk">FK</span></div>
+                    <div class="db-field"><span class="df-name">changeType</span><span
+                            class="df-type">AUTO/MANUAL</span></div>
+                    <div class="db-field"><span class="df-name">changedAt</span><span class="df-type">DateTime</span>
+                    </div>
+                </div>
+                <div class="db-table">
+                    <div class="db-head">🔔 PushSubscription</div>
+                    <div class="db-field"><span class="df-name">id</span><span class="df-type">Int</span><span
+                            class="df-pk">PK</span></div>
+                    <div class="db-field"><span class="df-name">endpoint</span><span class="df-type">String</span><span
+                            class="df-pk">UNIQUE</span></div>
+                    <div class="db-field"><span class="df-name">p256dh</span><span class="df-type">String</span></div>
+                    <div class="db-field"><span class="df-name">auth</span><span class="df-type">String</span></div>
+                    <div class="db-field"><span class="df-name">fingerprint</span><span
+                            class="df-type">Varchar(100)</span></div>
+                    <div class="db-field"><span class="df-name">customerId</span><span class="df-type">Int?</span></div>
+                </div>
+                <div class="db-table">
+                    <div class="db-head">⚙️ GlobalSetting</div>
+                    <div class="db-field"><span class="df-name">id</span><span class="df-type">Int</span><span
+                            class="df-pk">PK</span></div>
+                    <div class="db-field"><span class="df-name">key</span><span class="df-type">String</span><span
+                            class="df-pk">UNIQUE</span></div>
+                    <div class="db-field"><span class="df-name">value</span><span class="df-type">String</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CI/CD PIPELINE -->
+    <section id="pipeline" style="background:var(--s1)">
+        <div class="si fi">
+            <div class="sl">CI/CD Pipeline</div>
+            <div class="st">Google Cloud Build — cloudbuild.yaml</div>
+            <div class="sd">Triggered manually or on git push. Builds Docker images, runs DB migrations, and deploys to
+                Cloud Run in one pipeline.</div>
+            <div class="pipeline">
+                <div class="pipe-step">
+                    <div class="pipe-num">1</div>
+                    <h4>Build Backend</h4>
+                    <p>docker build<br>./backend → image</p>
+                </div>
+                <div class="pipe-arrow">→</div>
+                <div class="pipe-step">
+                    <div class="pipe-num">2</div>
+                    <h4>Push Image</h4>
+                    <p>Artifact Registry<br>asia-docker.pkg.dev</p>
+                </div>
+                <div class="pipe-arrow">→</div>
+                <div class="pipe-step">
+                    <div class="pipe-num">3</div>
+                    <h4>DB Migration</h4>
+                    <p>prisma db push<br>--accept-data-loss</p>
+                </div>
+                <div class="pipe-arrow">→</div>
+                <div class="pipe-step">
+                    <div class="pipe-num">4</div>
+                    <h4>Deploy Backend</h4>
+                    <p>Cloud Run<br>tickeflow-backend</p>
+                </div>
+                <div class="pipe-arrow">→</div>
+                <div class="pipe-step">
+                    <div class="pipe-num">5</div>
+                    <h4>Build Frontend</h4>
+                    <p>Vite build<br>React → static</p>
+                </div>
+                <div class="pipe-arrow">→</div>
+                <div class="pipe-step">
+                    <div class="pipe-num">6</div>
+                    <h4>Push Frontend</h4>
+                    <p>Artifact Registry<br>frontend image</p>
+                </div>
+                <div class="pipe-arrow">→</div>
+                <div class="pipe-step">
+                    <div class="pipe-num">7</div>
+                    <h4>Deploy Frontend</h4>
+                    <p>Cloud Run<br>tickeflow-frontend</p>
+                </div>
+            </div>
+            <div
+                style="margin-top:20px;background:var(--s2);border:1px solid var(--br);border-radius:12px;padding:18px 24px">
+                <code style="font-size:12px;color:var(--mu);line-height:2;display:block">
+        REGION: us-central1 &nbsp;|&nbsp; REPOSITORY: tickeflow &nbsp;|&nbsp; PLATFORM: managed (Cloud Run) &nbsp;|&nbsp;
+        AUTH: allow-unauthenticated &nbsp;|&nbsp; LOGGING: CLOUD_LOGGING_ONLY
+      </code>
+            </div>
+        </div>
+    </section>
+
+    <!-- BACKEND MODULES -->
+    <section>
+        <div class="si fi">
+            <div class="sl">NestJS Modules</div>
+            <div class="st">Backend Module Breakdown</div>
+            <div class="sd">8 NestJS modules registered in <code>AppModule</code>. Each module is self-contained with
+                its own controller, service, and optional gateway.</div>
+            <div class="grid3" style="gap:18px">
+                <div class="card">
+                    <div class="ct ct-p">Auth</div>
+                    <div class="ci">🔐</div>
+                    <h3>AuthModule</h3>
+                    <ul>
+                        <li>POST /auth/login</li>
+                        <li>validateUser() with bcrypt</li>
+                        <li>Generates signed JWT token</li>
+                        <li>JwtStrategy for Guards</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="ct ct-b">Core</div>
+                    <div class="ci">👤</div>
+                    <h3>CustomersModule</h3>
+                    <ul>
+                        <li>POST /customers/register</li>
+                        <li>GET /customers/verify/:mobile</li>
+                        <li>Upsert by mobile number</li>
+                        <li>Global customer identity</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="ct ct-p">Core</div>
+                    <div class="ci">🎫</div>
+                    <h3>TicketsModule</h3>
+                    <ul>
+                        <li>Full CRUD + scan endpoint</li>
+                        <li>DQR token generation (UUID)</li>
+                        <li>Device-fingerprint binding</li>
+                        <li>Auto-status on scan</li>
+                        <li>Socket.IO gateway integrated</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="ct ct-r">Retail</div>
+                    <div class="ci">🏪</div>
+                    <h3>RetailModule</h3>
+                    <ul>
+                        <li>Department management</li>
+                        <li>Order status definitions</li>
+                        <li>Device registration</li>
+                        <li>Global settings config</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="ct ct-d">Infra</div>
+                    <div class="ci">🗄️</div>
+                    <h3>PrismaModule</h3>
+                    <ul>
+                        <li>Singleton PrismaService</li>
+                        <li>Connection pooling</li>
+                        <li>Injected into all services</li>
+                        <li>Type-safe query builder</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="ct ct-b">Realtime</div>
+                    <div class="ci">📡</div>
+                    <h3>TicketsGateway (WS)</h3>
+                    <ul>
+                        <li>Socket.IO WebSocket server</li>
+                        <li>joinRoom event handler</li>
+                        <li>Emits ticketStatusUpdated</li>
+                        <li>Emits ticketClosed</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="ct ct-p">Push</div>
+                    <div class="ci">🔔</div>
+                    <h3>PushNotificationsModule</h3>
+                    <ul>
+                        <li>VAPID key management</li>
+                        <li>Browser push subscription store</li>
+                        <li>Fires push on status change</li>
+                        <li>Uses web-push npm library</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="ct ct-r">Analytics</div>
+                    <div class="ci">📊</div>
+                    <h3>ReportsModule</h3>
+                    <ul>
+                        <li>Ticket throughput analytics</li>
+                        <li>Status transition logs</li>
+                        <li>Staff performance queries</li>
+                        <li>Exportable data endpoints</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="ct ct-b">Auth</div>
+                    <div class="ci">🧑</div>
+                    <h3>UsersModule</h3>
+                    <ul>
+                        <li>Admin + Staff user accounts</li>
+                        <li>Role: ADMIN / STAFF</li>
+                        <li>bcrypt password hashing</li>
+                        <li>Used by AuthModule lookup</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div>⚡ TickeFlow v22.10 · Technical Architecture Reference</div>
+        <div>instance-20260304-091114 · GCP Compute Engine · us-central1</div>
+        <div style="color:var(--c1)">NestJS · React · PostgreSQL · Socket.IO · Prisma</div>
+    </footer>
+
+    <script>
+        const obs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('v'); obs.unobserve(e.target) } }), { threshold: .08 });
+        document.querySelectorAll('.fi').forEach(el => obs.observe(el));
+        const secs = document.querySelectorAll('section[id]');
+        const links = document.querySelectorAll('nav a');
+        window.addEventListener('scroll', () => {
+            let cur = '';
+            secs.forEach(s => { if (window.scrollY >= s.offsetTop - 120) cur = s.id });
+            links.forEach(a => { a.style.color = a.getAttribute('href') === '#' + cur ? '#e2e8f0' : '' });
+        });
+    </script>
+</body>
+
+</html>
