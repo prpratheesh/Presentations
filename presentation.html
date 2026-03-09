@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certification & Credit Management System - Project Proposal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #05070a;
+            --accent-primary: #00f2ff;
+            --accent-secondary: #7000ff;
+            --accent-vibrant: #ff00c8;
+            --text-main: #e0e6ed;
+            --text-dim: #94a3b8;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scrollbar-width: none;
+        }
+
+        *::-webkit-scrollbar {
+            display: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+        }
+
+        .presentation-container {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+        }
+
+        section {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Abstract Background Elements */
+        .bg-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent-secondary) 0%, transparent 70%);
+            filter: blur(100px);
+            opacity: 0.15;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .bg-glow-1 {
+            top: -10%;
+            left: -10%;
+        }
+
+        .bg-glow-2 {
+            bottom: -10%;
+            right: -10%;
+            background: radial-gradient(circle, var(--accent-primary) 0%, transparent 70%);
+        }
+
+        /* Content Styling */
+        .slide-content {
+            max-width: 1100px;
+            width: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 4rem;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        section.visible .slide-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .slide-header {
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1rem;
+        }
+
+        .slide-id {
+            color: var(--accent-primary);
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Lists and Grid */
+        ul {
+            list-style: none;
+        }
+
+        li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            font-size: 1.125rem;
+        }
+
+        li::before {
+            content: "→";
+            color: var(--accent-vibrant);
+            margin-right: 1rem;
+            font-weight: bold;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            border-radius: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-primary);
+        }
+
+        .feature-card h3 {
+            color: var(--accent-primary);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        /* Hero Slide Specific */
+        .hero-slide {
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 5rem;
+            line-height: 1;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-dim);
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        th {
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
+
+        /* Navigation Hints */
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0) translateX(-50%);
+            }
+
+            40% {
+                transform: translateY(-10px) translateX(-50%);
+            }
+
+            60% {
+                transform: translateY(-5px) translateX(-50%);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            section {
+                padding: 1rem;
+            }
+
+            .slide-content {
+                padding: 2rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            .hero-title {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="presentation-container">
+        <!-- Abstract Background -->
+        <div class="bg-glow bg-glow-1"></div>
+        <div class="bg-glow bg-glow-2"></div>
+
+        <!-- Slide 0: Hero -->
+        <section id="slide-0" class="hero-slide">
+            <div class="slide-content">
+                <span class="slide-id">PROJECT PROPOSAL 2026</span>
+                <h1 class="hero-title gradient-text">Certification & Credit Management System</h1>
+                <p class="hero-subtitle">Comprehensive lifecycle management for inspection and certification services.
+                </p>
+                <div style="margin-top: 3rem; display: flex; justify-content: center; gap: 2rem;">
+                    <div class="feature-card" style="padding: 1rem 2rem;">ISO / Inspection</div>
+                    <div class="feature-card" style="padding: 1rem 2rem;">Auto Reminders</div>
+                    <div class="feature-card" style="padding: 1rem 2rem;">Financial Tracking</div>
+                </div>
+            </div>
+            <div class="scroll-hint">Scroll to explore the proposal</div>
+        </section>
+
+        <!-- Slide 1: Project Overview -->
+        <section id="slide-1">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <span class="slide-id">01 / OVERVIEW</span>
+                    <h2>Project <span class="gradient-text">Context</span></h2>
+                </div>
+                <div class="grid">
+                    <div class="feature-card">
+                        <h3>Objective</h3>
+                        <p>Develop a centralized system to manage certification validity, renewal reminders, payment
+                            tracking, and document management.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Industry Context</h3>
+                        <p>Organizations providing international certifications (ISO, Equipment Inspection) requiring
+                            efficient tracking of validity and payment cycles.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Current Ecosystem</h3>
+                        <ul>
+                            <li>SAP ERP (Backend)</li>
+                            <li>Salesforce CRM</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Roadmap</h3>
+                        <ul>
+                            <li><strong>Phase 1:</strong> Standalone System</li>
+                            <li><strong>Future:</strong> ERP & CRM Integration</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 2: Problem Statement -->
+        <section id="slide-2">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <span class="slide-id">02 / CHALLENGES</span>
+                    <h2>The <span class="gradient-text">Problem</span></h2>
+                </div>
+                <div class="grid">
+                    <div>
+                        <h3 style="color: var(--accent-vibrant); margin-bottom: 1.5rem;">Lack of Centralization</h3>
+                        <ul>
+                            <li>No unified platform for certificate validity.</li>
+                            <li>Manual notification processes.</li>
+                            <li>Fragmented credit payment tracking.</li>
+                            <li>Difficult document retrieval.</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card" style="border-color: rgba(255, 0, 0, 0.2);">
+                        <h3>Business Impact</h3>
+                        <ul style="color: #ff6b6b;">
+                            <li>Missed renewal opportunities</li>
+                            <li>Delayed customer payments</li>
+                            <li>High manual tracking effort</li>
+                            <li>Poor lifecycle visibility</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 3: Project Goals -->
+        <section id="slide-3">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <span class="slide-id">03 / OBJECTIVES</span>
+                    <h2>Strategic <span class="gradient-text">Goals</span></h2>
+                </div>
+                <div class="grid">
+                    <div class="feature-card">
+                        <h3>Automation</h3>
+                        <p>Automate expiry reminders for internal staff and customers.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Flexibility</h3>
+                        <p>Track various certificates with differing validity periods.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Control</h3>
+                        <p>Manage credit payment reminders and collection follow-ups.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Visibility</h3>
+                        <p>Dashboards for management to monitor performance and health.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 4: Key Features - Phase 1 -->
+        <section id="slide-4">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <span class="slide-id">04 / PHASE 1</span>
+                    <h2>Certificate <span class="gradient-text">Management</span></h2>
+                </div>
+                <div class="grid">
+                    <div class="feature-card">
+                        <h3>Upload & Organize</h3>
+                        <p>Central repository for all issued certificates with history tracking.</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Validity Tracking</h3>
+                        <p>Real-time monitoring of status and expiration windows.</p>
+                    </div>
+                </div>
+                <div style="margin-top: 3rem;">
+                    <h3>Automated Reminder Schedule</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Validity Period</th>
+                                <th>Reminder Trigger</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>6 Months</td>
+                                <td>30 Days before expiry</td>
+                            </tr>
+                            <tr>
+                                <td>12 Months</td>
+                                <td>60 Days before expiry</td>
+                            </tr>
+                            <tr>
+                                <td>14 Months</td>
+                                <td>60 Days before expiry</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 5: Payment & Credit Module -->
+        <section id="slide-5">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <span class="slide-id">05 / FINANCIALS</span>
+                    <h2>Payment & <span class="gradient-text">Credit Control</span></h2>
+                </div>
+                <div class="grid">
+                    <div>
+                        <h3>Tracking Features</h3>
+                        <ul>
+                            <li>Customer credit period monitoring</li>
+                            <li>Invoice due date tracking</li>
+                            <li>Automated collection alerts</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Reminder Cadence</h3>
+                        <div class="feature-card">
+                            <p><strong>10 Days Before:</strong> First Reminder</p>
+                            <p><strong>15 Days Before:</strong> Final Invoice Alert</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-card" style="margin-top: 2rem;">
+                    <h3>Collection Team Empowerment</h3>
+                    <p>Update follow-up status, record customer responses, and track pending payments in real-time.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 6: Document Management -->
+        <section id="slide-6">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <span class="slide-id">06 / DOCUMENTS</span>
+                    <h2>Unified <span class="gradient-text">Repository</span></h2>
+                </div>
+                <div class="grid">
+                    <div class="feature-card">
+                        <h3>Core Assets</h3>
+                        <ul>
+                            <li>Issued Certificates</li>
+                            <li>Payment Documents</li>
+                            <li>Pending Invoices</li>
+                            <li>Inspection Reports</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card" style="background: rgba(0, 242, 255, 0.05);">
+                        <h3>Key Benefits</h3>
+                        <ul>
+                            <li>Centralized logic</li>
+                            <li>Instant retrieval</li>
+                            <li>Encrypted storage</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 7: User Roles -->
+        <section id="slide-7">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <span class="slide-id">07 / PERMISSIONS</span>
+                    <h2>User <span class="gradient-text">Roles</span></h2>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Role</th>
+                            <th>Primary Responsibilities</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Admin</strong></td>
+                            <td>Config, User Mgmt</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Certification Team</strong></td>
+                            <td>Upload/Manage Certificates</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sales Team</strong></td>
+                            <td>Customer Relations</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Collection Team</strong></td>
+                            <td>Payment Follow-up</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Management</strong></td>
+                            <td>Analytics/Dashboards</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Slide 8: System Workflow -->
+        <section id="slide-8">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <span class="slide-id">08 / FLOW</span>
+                    <h2>Operational <span class="gradient-text">Workflow</span></h2>
+                </div>
+                <div class="grid">
+                    <div class="feature-card">
+                        <h3>Certification Loop</h3>
+                        <ol style="margin-top: 1rem; color: var(--text-dim); padding-left: 1.5rem;">
+                            <li>Inspection Completed</li>
+                            <li>Upload to System</li>
+                            <li>Auto-Calculate Dates</li>
+                            <li>Trigger Reminders</li>
+                        </ol>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Payment Loop</h3>
+                        <ol style="margin-top: 1rem; color: var(--text-dim); padding-left: 1.5rem;">
+                            <li>Invoice Created</li>
+                            <li>Credit Period Assigned</li>
+                            <li>Schedule Reminders</li>
+                            <li>Update Follow-up Status</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 9: Architecture -->
+        <section id="slide-9">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <span class="slide-id">09 / TECHNOLOGY</span>
+                    <h2>System <span class="gradient-text">Architecture</span></h2>
+                </div>
+                <div class="grid">
+                    <div class="feature-card">
+                        <h3>Frontend</h3>
+                        <p>Modern Web Application</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Backend</h3>
+                        <p>Secure Application Server</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Database</h3>
+                        <p>Relational Data Model (Customers, Certificates, Payments)</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Services</h3>
+                        <p>Email & Notification Service</p>
+                    </div>
+                </div>
+                <p style="margin-top: 2rem; color: var(--accent-vibrant); font-weight: bold; text-align: center;">PHASE
+                    1: Standalone deployment optimized for future connectivity.</p>
+            </div>
+        </section>
+
+        <!-- Slide 10: Future Enhancements -->
+        <section id="slide-10">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <span class="slide-id">10 / VISION</span>
+                    <h2>Scale & <span class="gradient-text">Integration</span></h2>
+                </div>
+                <div class="grid">
+                    <div>
+                        <h3>Ecosystem Integration</h3>
+                        <ul>
+                            <li>SAP ERP Sync</li>
+                            <li>Salesforce CRM Bridge</li>
+                            <li>API First Architecture</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Feature Roadmap</h3>
+                        <ul>
+                            <li>Mobile Application</li>
+                            <li>Customer Self-Service Portal</li>
+                            <li>AI-Driven Analytics</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 11: Benefits -->
+        <section id="slide-11">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <span class="slide-id">11 / VALUE</span>
+                    <h2>Business <span class="gradient-text">Impact</span></h2>
+                </div>
+                <div class="grid">
+                    <div class="feature-card">
+                        <h3>Operational</h3>
+                        <ul>
+                            <li>Zero manual tracking</li>
+                            <li>Perfect renewal rates</li>
+                            <li>Centralized records</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card" style="background: rgba(112, 0, 255, 0.05);">
+                        <h3>Strategic</h3>
+                        <ul>
+                            <li>Increased revenue</li>
+                            <li>Improved compliance</li>
+                            <li>Full visibility</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 12: Implementation Plan -->
+        <section id="slide-12">
+            <div class="slide-content">
+                <div class="slide-header">
+                    <span class="slide-id">12 / TIMELINE</span>
+                    <h2>Deployment <span class="gradient-text">Roadmap</span></h2>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h3>Phase 1 Delivery</h3>
+                    <span class="feature-card" style="padding: 0.5rem 1rem;">6 - 8 WEEKS</span>
+                </div>
+                <div class="grid" style="grid-template-columns: repeat(5, 1fr);">
+                    <div style="text-align: center; font-size: 0.875rem;">
+                        <div
+                            style="height: 10px; background: var(--accent-primary); border-radius: 5px; margin-bottom: 1rem;">
+                        </div>
+                        Analysis
+                    </div>
+                    <div style="text-align: center; font-size: 0.875rem;">
+                        <div
+                            style="height: 10px; background: var(--accent-primary); border-radius: 5px; margin-bottom: 1rem;">
+                        </div>
+                        Design
+                    </div>
+                    <div style="text-align: center; font-size: 0.875rem;">
+                        <div
+                            style="height: 10px; background: var(--accent-primary); border-radius: 5px; margin-bottom: 1rem;">
+                        </div>
+                        Dev
+                    </div>
+                    <div style="text-align: center; font-size: 0.875rem;">
+                        <div
+                            style="height: 10px; background: var(--accent-primary); border-radius: 5px; margin-bottom: 1rem;">
+                        </div>
+                        Test
+                    </div>
+                    <div style="text-align: center; font-size: 0.875rem;">
+                        <div
+                            style="height: 10px; background: var(--accent-secondary); border-radius: 5px; margin-bottom: 1rem;">
+                        </div>
+                        Launch
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 13: Conclusion -->
+        <section id="slide-13">
+            <div class="slide-content" style="text-align: center;">
+                <div class="slide-header">
+                    <span class="slide-id">FINAL</span>
+                    <h2>Ready for the <span class="gradient-text">Future</span></h2>
+                </div>
+                <p style="font-size: 1.5rem; margin-bottom: 3rem;">Automating compliance, maximizing efficiency,
+                    securing growth.</p>
+                <div
+                    style="padding: 3rem; background: rgba(0, 242, 255, 0.05); border-radius: 24px; border: 1px dashed var(--accent-primary);">
+                    <h3 style="margin-bottom: 1rem;">Contact for Next Steps</h3>
+                    <p>Internal Project Proposal - 2026</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Intersection Observer for Slide Entrance Animations
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                } else {
+                    // Optional: remove visible class to re-animate when scrolling back
+                    // entry.target.classList.remove('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Keyboard Navigation (Arrow Keys)
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                const current = Math.round(document.querySelector('.presentation-container').scrollTop / window.innerHeight);
+                const next = Math.min(current + 1, 13);
+                document.querySelector('.presentation-container').scrollTo({
+                    top: next * window.innerHeight,
+                    behavior: 'smooth'
+                });
+            } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                const current = Math.round(document.querySelector('.presentation-container').scrollTop / window.innerHeight);
+                const prev = Math.max(current - 1, 0);
+                document.querySelector('.presentation-container').scrollTo({
+                    top: prev * window.innerHeight,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
